@@ -9,7 +9,6 @@ import android.util.Log;
 import java.lang.reflect.Method;
 
 /**
- *
  * need  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
  *
  * @author Hank 2016-8-8
