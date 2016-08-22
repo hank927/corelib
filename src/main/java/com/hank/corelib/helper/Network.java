@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  * need  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
  *
  * @author Hank
- *         2016-1-8
+ *         2016-8-8
  */
 public class Network {
     private static final String TAG = Network.class.getSimpleName();
