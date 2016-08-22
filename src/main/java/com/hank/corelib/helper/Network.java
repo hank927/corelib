@@ -9,12 +9,10 @@ import android.util.Log;
 import java.lang.reflect.Method;
 
 /**
- * assist us in sensing state of the networks.
  *
  * need  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
  *
- * @author Hank
- *         2016-8-8
+ * @author Hank 2016-8-8
  */
 public class Network {
     private static final String TAG = Network.class.getSimpleName();
