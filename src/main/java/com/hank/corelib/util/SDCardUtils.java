@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 
 /**
- * Created by hank on 2016/8/12.
+ * Created by hank on 2016/8/18.
  */
 public class SDCardUtils {
     public static String getDiskCacheDir(Context context) {
