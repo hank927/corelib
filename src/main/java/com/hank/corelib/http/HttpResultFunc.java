@@ -1,7 +1,8 @@
 package com.hank.corelib.http;
 
 
-import com.hank.corelib.entity.HttpResult;
+
+import com.hank.corelib.http.entity.HttpResult;
 
 import rx.functions.Func1;
 

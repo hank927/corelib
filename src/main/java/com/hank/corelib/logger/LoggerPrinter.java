@@ -1,5 +1,9 @@
 package com.hank.corelib.logger;
 
+import android.text.TextUtils;
+
+import com.hank.corelib.util.Check;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -107,51 +111,79 @@ final class LoggerPrinter implements Printer {
   }
 
   @Override public void d(String message, Object... args) {
-    log(DEBUG, null, message, args);
+    d(null, message, args);
+  }
+
+  @Override public void d(String tag,String message, Object... args) {
+    log(DEBUG, null, tag, message, args);
   }
 
   @Override public void d(Object object) {
+    d(null, object);
+  }
+
+  @Override public void d(String tag, Object object) {
     String message;
     if (object.getClass().isArray()) {
       message = Arrays.deepToString((Object[]) object);
     } else {
       message = object.toString();
     }
-    log(DEBUG, null, message);
+    log(DEBUG, null, tag, message);
   }
-
   @Override public void e(String message, Object... args) {
-    e(null, message, args);
+    e(null,null, message, args);
+  }
+  @Override public void e(String tag, String message, Object... args) {
+    e(tag,null, message, args);
   }
 
   @Override public void e(Throwable throwable, String message, Object... args) {
-    log(ERROR, throwable, message, args);
+    e(null, throwable, message, args);
   }
-
+  @Override public void e(String tag, Throwable throwable, String message, Object... args) {
+    log(ERROR, throwable,tag, message, args);
+  }
   @Override public void w(String message, Object... args) {
-    log(WARN, null, message, args);
+    w( null, message, args);
   }
-
+  @Override public void w(String tag, String message, Object... args) {
+    log(WARN, null,tag, message, args);
+  }
   @Override public void i(String message, Object... args) {
-    log(INFO, null, message, args);
+    i(null,  message, args);
   }
-
+  @Override public void i(String tag, String message, Object... args) {
+    log(INFO, null,tag, message, args);
+  }
   @Override public void v(String message, Object... args) {
-    log(VERBOSE, null, message, args);
+    v( null, message, args);
   }
-
+  @Override public void v(String tag, String message, Object... args) {
+    log(VERBOSE, null, tag, message, args);
+  }
   @Override public void wtf(String message, Object... args) {
-    log(ASSERT, null, message, args);
+    wtf( null, message, args);
   }
-
+  @Override public void wtf(String tag, String message, Object... args) {
+    log(ASSERT, null,tag, message, args);
+  }
   /**
    * Formats the json content and print it
    *
    * @param json the json content
    */
   @Override public void json(String json) {
+    json(null, json);
+  }
+  /**
+   * Formats the json content and print it
+   *
+   * @param json the json content
+   */
+  @Override public void json(String tag, String json) {
     if (Helper.isEmpty(json)) {
-      d("Empty/Null json content");
+      d(tag,"Empty/Null json content");
       return;
     }
     try {
@@ -159,29 +191,36 @@ final class LoggerPrinter implements Printer {
       if (json.startsWith("{")) {
         JSONObject jsonObject = new JSONObject(json);
         String message = jsonObject.toString(JSON_INDENT);
-        d(message);
+        d(tag, message);
         return;
       }
       if (json.startsWith("[")) {
         JSONArray jsonArray = new JSONArray(json);
         String message = jsonArray.toString(JSON_INDENT);
-        d(message);
+        d(tag, message);
         return;
       }
-      e("Invalid Json");
+      e(tag, "Invalid Json");
     } catch (JSONException e) {
-      e("Invalid Json");
+      e(tag, "Invalid Json");
     }
   }
-
   /**
    * Formats the json content and print it
    *
    * @param xml the xml content
    */
   @Override public void xml(String xml) {
+    xml(null,xml);
+  }
+  /**
+   * Formats the json content and print it
+   *
+   * @param xml the xml content
+   */
+  @Override public void xml(String tag, String xml) {
     if (Helper.isEmpty(xml)) {
-      d("Empty/Null xml content");
+      d(tag, "Empty/Null xml content");
       return;
     }
     try {
@@ -191,12 +230,11 @@ final class LoggerPrinter implements Printer {
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
       transformer.transform(xmlInput, xmlOutput);
-      d(xmlOutput.getWriter().toString().replaceFirst(">", ">\n"));
+      d(tag, xmlOutput.getWriter().toString().replaceFirst(">", ">\n"));
     } catch (TransformerException e) {
-      e("Invalid xml");
+      e(tag, "Invalid xml");
     }
   }
-
   @Override public synchronized void log(int priority, String tag, String message, Throwable throwable) {
     if (settings.getLogLevel() == LogLevel.NONE) {
       return;
@@ -245,13 +283,14 @@ final class LoggerPrinter implements Printer {
   }
 
   /**
-   * This method is synchronized in order to avoid messy of logs' order.
+   * This method is synchronized in order to avoid messy of logs' order with given tag.
    */
-  private synchronized void log(int priority, Throwable throwable, String msg, Object... args) {
+  private synchronized void log(int priority, Throwable throwable, String tag, String msg, Object... args) {
     if (settings.getLogLevel() == LogLevel.NONE) {
       return;
     }
-    String tag = getTag();
+    if(Check.isEmpty(tag))
+      tag = getTag();
     String message = createMessage(msg, args);
     log(priority, tag, message, throwable);
   }

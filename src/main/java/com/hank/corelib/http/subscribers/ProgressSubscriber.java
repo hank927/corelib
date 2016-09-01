@@ -1,10 +1,11 @@
-package com.hank.corelib.subscribers;
+package com.hank.corelib.http.subscribers;
 
 import android.content.Context;
 import android.widget.Toast;
 
-import com.hank.corelib.progress.ProgressCancelListener;
-import com.hank.corelib.progress.ProgressDialogHandler;
+
+import com.hank.corelib.http.progress.ProgressCancelListener;
+import com.hank.corelib.http.progress.ProgressDialogHandler;
 
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;

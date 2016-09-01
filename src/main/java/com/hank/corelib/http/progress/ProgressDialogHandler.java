@@ -1,4 +1,4 @@
-package com.hank.corelib.progress;
+package com.hank.corelib.http.progress;
 
 import android.app.ProgressDialog;
 import android.content.Context;

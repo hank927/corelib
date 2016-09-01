@@ -1,4 +1,4 @@
-package com.hank.corelib.entity;
+package com.hank.corelib.http.entity;
 
 /**
  * Created by Hank on 16/3/5.

@@ -1,4 +1,4 @@
-package com.hank.corelib.subscribers;
+package com.hank.corelib.http.subscribers;
 
 /**
  * Created by Hank on 16/3/10.
