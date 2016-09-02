@@ -19,9 +19,9 @@ public class TaskTools {
      *
      * @param uiTask
      */
-    public static <T> void doInUIThread(UITask<T> uiTask) {
+    public static <T> void executeUITask(UITask<T> uiTask) {
 
-        doInUIThreadDelay(uiTask, 0, TimeUnit.MILLISECONDS);
+        executeUITaskDelay(uiTask, 0, TimeUnit.MILLISECONDS);
     }
 
 
@@ -33,7 +33,7 @@ public class TaskTools {
      * @param timeUnit
      * @param <T>
      */
-    public static <T> void doInUIThreadDelay(UITask<T> uiTask, long time, TimeUnit timeUnit) {
+    public static <T> void executeUITaskDelay(UITask<T> uiTask, long time, TimeUnit timeUnit) {
         Observable.just(uiTask)
                 .delay(time, timeUnit)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -51,8 +51,8 @@ public class TaskTools {
      *
      * @param <T>
      */
-    public static <T> void doInIOThread(IOTask<T> ioTask) {
-        doInIOThreadDelay(ioTask, 0, TimeUnit.MILLISECONDS);
+    public static <T> void executeIOTask(IOTask<T> ioTask) {
+        executeIOTaskDelay(ioTask, 0, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -60,7 +60,7 @@ public class TaskTools {
      *
      * @param <T>
      */
-    public static <T> void doInIOThreadDelay(IOTask<T> ioTask, long time, TimeUnit timeUnit) {
+    public static <T> void executeIOTaskDelay(IOTask<T> ioTask, long time, TimeUnit timeUnit) {
         Observable.just(ioTask)
                 .delay(time, timeUnit)
                 .observeOn(Schedulers.io())
