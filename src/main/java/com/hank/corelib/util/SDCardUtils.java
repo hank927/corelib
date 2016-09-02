@@ -177,25 +177,6 @@ public class SDCardUtils {
         }
     }
 
-//    /**
-//     * 获取指定路径所在空间的剩余可用容量字节数，单位byte
-//     *
-//     * @param filePath
-//     * @return 容量字节 SDCard可用空间，内部存储可用空间
-//     */
-//    public static long getFreeBytes(String filePath) {
-//        // 如果是sd卡的下的路径，则获取sd卡可用容量
-//        if (filePath.startsWith(getSDCardPath())) {
-//            filePath = getSDCardPath();
-//        } else {// 如果是内部存储的路径，则获取内存存储的可用容量
-//            filePath = Environment.getDataDirectory().getAbsolutePath();
-//        }
-//        StatFs stat = new StatFs(filePath);
-//        long availableBlocks = (long) stat.getAvailableBlocks() - 4;
-//        return stat.getBlockSize() * availableBlocks;
-//    }
-//
-
     /**
      * Get available size of SD card.
      */
