@@ -16,11 +16,15 @@ import java.io.*;
 import java.util.ArrayList;
 import com.hank.corelib.util.ConstUtils.*;
 /**
+<<<<<<< HEAD
  * <pre>
  *     author: Hank
  *     time  : 2016/8/11
  *     desc  : SD卡相关工具类
  * </pre>
+=======
+ * Created by hank on 2016/8/18.
+>>>>>>> 996926f3a3416dde5aa86a83efef02d298167048
  */
 public class SDCardUtils {
     private static final String TAG = SDCardUtils.class.getSimpleName();
