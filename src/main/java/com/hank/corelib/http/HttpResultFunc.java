@@ -3,6 +3,8 @@ package com.hank.corelib.http;
 
 
 import com.hank.corelib.http.entity.HttpResult;
+import com.hank.corelib.http.entity.Result;
+import com.hank.corelib.logger.Logger;
 
 import rx.functions.Func1;
 
@@ -13,10 +15,12 @@ public class HttpResultFunc<T> implements Func1<HttpResult<T>, T> {
 
     @Override
     public T call(HttpResult<T> httpResult) {
-        if (httpResult.getCount() == 0) {
-            throw new ApiException(100);
+        Result<T> result = httpResult.result;
+        Logger.d(result.toString());
+        if (!result.success) {
+            throw new ApiException(result.respCode);
         }
-        return httpResult.getSubjects();
+        return result.data;
     }
 }
 
