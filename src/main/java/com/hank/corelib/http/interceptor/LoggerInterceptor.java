@@ -93,7 +93,7 @@ public class LoggerInterceptor implements Interceptor {
             Headers headers = request.headers();
 
             Logger.d(tag, "========request'log=======");
-            Logger.d(tag, "method : " + request.method());
+            Logger.d(tag, "method : " + request.method()+","+headers.size());
             Logger.d(tag, "url : " + url);
             if (headers != null && headers.size() > 0) {
                 Logger.d(tag, "headers : " + headers.toString());

@@ -21,14 +21,30 @@ import rx.Subscriber;
 public class ProgressSubscriber<T> extends Subscriber<T> implements ProgressCancelListener {
 
     private SubscriberOnNextListener mSubscriberOnNextListener;
+
     private ProgressDialogHandler mProgressDialogHandler;
 
     private Context context;
 
+    private boolean isDialogShow;
+
     public ProgressSubscriber(SubscriberOnNextListener mSubscriberOnNextListener, Context context) {
         this.mSubscriberOnNextListener = mSubscriberOnNextListener;
         this.context = context;
-        mProgressDialogHandler = new ProgressDialogHandler(context, this, true);
+    }
+
+    public boolean isDialogShow() {
+        return isDialogShow;
+    }
+
+    public void setDialogShow(boolean dialogShow) {
+        isDialogShow = dialogShow;
+        if(isDialogShow){
+            if(mProgressDialogHandler==null)
+                mProgressDialogHandler = new ProgressDialogHandler(context, this, true);
+        } else {
+            dismissProgressDialog();
+        }
     }
 
     private void showProgressDialog(){
@@ -59,7 +75,6 @@ public class ProgressSubscriber<T> extends Subscriber<T> implements ProgressCanc
     @Override
     public void onCompleted() {
         dismissProgressDialog();
-//        Toast.makeText(context, "Get Top Movie Completed", Toast.LENGTH_SHORT).show();
     }
 
     /**

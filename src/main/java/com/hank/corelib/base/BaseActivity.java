@@ -1,10 +1,15 @@
 package com.hank.corelib.base;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
+
+import com.hank.corelib.R;
+import com.hank.corelib.extras.Extras;
 
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
@@ -61,5 +66,26 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             mCompositeSubscription = new CompositeSubscription();
         }
         mCompositeSubscription.add(subscription);
+    }
+
+    public void switchToActivity(Context context, Class<?> clazz ){
+        Intent intent = new Intent(context,clazz);
+        startActivity(intent);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+    }
+
+    public void switchToActivity(Context context, Class<?> clazz ,Bundle bundle){
+        Intent intent = new Intent(context,clazz);
+        intent.putExtra(Extras.INTENT_BUNDLE, bundle);
+        startActivity(intent);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+    }
+
+    public void switchToActivityForResult(Context context, Class<?> clazz ,Bundle bundle,int requestCode){
+        Intent intent = new Intent(context,clazz);
+        if(bundle!=null)
+            intent.putExtra(Extras.INTENT_BUNDLE, bundle);
+        startActivityForResult(intent, requestCode);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 }

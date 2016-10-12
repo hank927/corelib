@@ -20,6 +20,8 @@ public abstract class IOTask<T> {
         setT(t);
     }
 
+    public IOTask() {
+    }
 
     public abstract void doInIOThread();
 }

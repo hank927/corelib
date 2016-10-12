@@ -20,7 +20,7 @@ public class CollectionUtils {
      * @return if map is null or its size is 0, return true, else return false.
      */
     public static <K, V> boolean isEmpty(Map<K, V> sourceMap) {
-        return (sourceMap == null || sourceMap.size() == 0);
+        return (sourceMap == null || sourceMap.size() <= 0);
     }
 
     /**
@@ -37,7 +37,7 @@ public class CollectionUtils {
      * @return if list is null or its size is 0, return true, else return false.
      */
     public static <V> boolean isEmpty(List<V> sourceList) {
-        return (sourceList == null || sourceList.size() == 0);
+        return (sourceList == null || sourceList.size() <= 0);
     }
     /**
      * is null or its size is 0
@@ -53,6 +53,6 @@ public class CollectionUtils {
      * @return if list is null or its size is 0, return true, else return false.
      */
     public static <V> boolean isEmpty(Object[] objects) {
-        return (objects == null || objects.length == 0);
+        return (objects == null || objects.length <= 0);
     }
 }

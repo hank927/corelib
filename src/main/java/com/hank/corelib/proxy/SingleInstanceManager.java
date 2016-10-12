@@ -2,14 +2,12 @@ package com.hank.corelib.proxy;
 
 import android.content.Context;
 import android.util.ArrayMap;
-import android.util.Log;
 
 import com.hank.corelib.logger.Logger;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class SingleInstanceManager {
 
@@ -124,6 +122,7 @@ public class SingleInstanceManager {
 
 
             Object obj = c.newInstance();
+
 
             Logger.d(TAG, "[[makeNewInstance]] create obj = " + obj + " SingleInstanceBase is " + (obj instanceof SingleInstanceBase));
 

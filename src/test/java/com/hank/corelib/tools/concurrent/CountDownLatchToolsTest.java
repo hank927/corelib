@@ -1,8 +1,12 @@
 package com.hank.corelib.tools.concurrent;
 
+import android.provider.Settings;
+
 import com.hank.corelib.tools.concurrent.base.AbsLimitCountExecutor;
 
 import org.junit.Test;
+
+import java.io.File;
 
 import static org.junit.Assert.*;
 
@@ -32,7 +36,6 @@ public class CountDownLatchToolsTest {
                     });
         }
         taskExecutorUtil.execute();
-
         System.out.println("over");
     }
 }

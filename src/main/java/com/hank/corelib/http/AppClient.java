@@ -3,8 +3,11 @@ package com.hank.corelib.http;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.ArrayMap;
+import android.util.SparseArray;
 
+import com.hank.corelib.http.converter.GsonConverterFactory;
 import com.hank.corelib.http.interceptor.CacheInterceptor;
+import com.hank.corelib.http.interceptor.LoggerInterceptor;
 import com.hank.corelib.logger.Logger;
 import com.hank.corelib.util.CollectionUtils;
 import com.hank.corelib.util.FileUtil;
@@ -12,6 +15,9 @@ import com.hank.corelib.util.SDCardUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +31,6 @@ import retrofit2.CallAdapter;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * @page Created by Hank on 2016/4/6.
@@ -46,7 +51,9 @@ public class AppClient {
     private CallAdapter.Factory callAdapterFactory;
 
     private ArrayMap<String, Interceptor> interceptors;
+//    private ArrayMap<String, WeakReference<Class>> proxyClasses;
 
+    private List<Observer> observers = new ArrayList<Observer>();
     private AppClient() {
     }
 
@@ -74,72 +81,72 @@ public class AppClient {
             throw new IllegalArgumentException("baseurl must be set not null before start a http");
         }
         if (retrofit == null) {
+            okHttpClient = getOkHttpClient();
+            converterFactory = getConverterFactory();
+            callAdapterFactory = getCallAdapterFactory();
             retrofit = new Retrofit.Builder()
-                    .client(getOkHttpClient())
-                    .addConverterFactory(getConverterFactory())
-                    .addCallAdapterFactory(getCallAdapterFactory())
+                    .client(okHttpClient)
+                    .addConverterFactory(converterFactory)
+                    .addCallAdapterFactory(callAdapterFactory)
                     .baseUrl(baseUrl)
                     .build();
+            notifyOb();
         }
 
         return retrofit;
     }
 
     public Retrofit addInterceptor(Interceptor... interceptors){
-        OkHttpClient.Builder builder = createBuilder();
-        if(!CollectionUtils.isEmpty(interceptors)){
-            for(Interceptor interceptor:interceptors){
-                builder.addInterceptor(interceptor);
-            }
-        }
-
+        OkHttpClient.Builder builder = createBuilder(interceptors);
         okHttpClient = builder.build();
         retrofit = null;
         return getRetrofit();
     }
 
-    public Retrofit addHeader(final String key,final String value){
-        return addInterceptor(new Interceptor() {
+    public AppClient addHeader(final String key,final String value){
+        addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request()
+                        .newBuilder()
+                        .header(key, value)
+                        .build();
+                return chain.proceed(request);
+            }
+        });
+        return this;
+    }
+
+    public AppClient removeHeader(final String key){
+        addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 Request request = chain.request()
                         .newBuilder()
                         .removeHeader(key)
-                        .addHeader(key, value)
                         .build();
                 return chain.proceed(request);
             }
         });
+        return this;
     }
 
-    public Retrofit removeHeader(final String key){
-        return addInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request()
-                        .newBuilder()
-                        .removeHeader(key)
-                        .build();
-                return chain.proceed(request);
-            }
-        });
-    }
-
-    public Retrofit addHeader(final ArrayMap<String, String> headers){
-        return addInterceptor(new Interceptor() {
+    public AppClient addHeader(final ArrayMap<String, String> headers){
+         addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
                Request.Builder builder = chain.request()
                         .newBuilder();
                 if(!CollectionUtils.isEmpty(headers)){
                     for (Map.Entry<String, String> entry : headers.entrySet()) {
-                        builder.removeHeader(entry.getKey()).addHeader(entry.getKey(),entry.getValue());
+                        builder.header(entry.getKey(),entry.getValue());
                     }
                 }
                 Request request = builder.build();
                 return chain.proceed(request);
             }
         });
+        return this;
     }
 
     public CallAdapter.Factory getCallAdapterFactory() {
@@ -211,16 +218,30 @@ public class AppClient {
      *
      * @return Builder
      */
-    private OkHttpClient.Builder createBuilder(){
+    private OkHttpClient.Builder createBuilder(Interceptor... interceptors){
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        List<Interceptor> lists = getOkHttpClient().interceptors();
-        if(!CollectionUtils.isEmpty(lists)){
+        List<Interceptor> lists = new ArrayList<>();
+        List<Interceptor> ls = getOkHttpClient().interceptors();
+        if(!CollectionUtils.isEmpty(ls))
+            lists.addAll(ls);
+        if(!CollectionUtils.isEmpty(interceptors)){
+            for(Interceptor interceptor:interceptors)
+                lists.add(interceptor);
+        }
+        List<Interceptor> loggerInterceptors = new ArrayList<>();
             for(Interceptor interceptor:lists){
                 if(interceptor instanceof CacheInterceptor && !enableCache){
                     Logger.d("change to no cache");
-                }else
-                builder.addInterceptor(interceptor);
+                }else {
+                    if(interceptor instanceof LoggerInterceptor){
+                        loggerInterceptors.add( interceptor);
+                    } else
+                        builder.addInterceptor(interceptor);
+                }
             }
+        if(!CollectionUtils.isEmpty(loggerInterceptors)){
+            for(Interceptor interceptor:loggerInterceptors)
+                builder.addInterceptor(interceptor);
         }
         builder.connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
         return builder;
@@ -228,6 +249,21 @@ public class AppClient {
 
     public <T> T create(Class<T> clazz){
         return getRetrofit().create(clazz);
+    }
+
+    public  void attach(Observer o){
+        observers.add(o);
+    }
+
+    public void  detach(Observer o){
+        observers.remove(o);
+    }
+
+    public void notifyOb(){
+        Logger.i("notify Invoked");
+        for (int i=0; i<observers.size(); i++){
+            observers.get(i).refreshService();
+        }
     }
 
 }

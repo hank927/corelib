@@ -1,15 +1,22 @@
-package com.hank.corelib.http;
+package com.hank.corelib.http.exception;
+
+import android.text.TextUtils;
 
 /**
  * Created by Hank on 16/3/10.
  */
-public class ApiException extends RuntimeException {
+public class ApiException extends HttpException {
 
     public static final int USER_NOT_EXIST = 100;
     public static final int WRONG_PASSWORD = 101;
+    public static final int NULL_RESULT = 102;
 
     public ApiException(int resultCode) {
-        this(getApiExceptionMessage(resultCode));
+        this(resultCode, "");
+    }
+
+    public ApiException(int resultCode, String msg) {
+        this(getApiExceptionMessage(resultCode, msg));
     }
 
     public ApiException(String detailMessage) {
@@ -22,14 +29,19 @@ public class ApiException extends RuntimeException {
      * @param code
      * @return
      */
-    private static String getApiExceptionMessage(int code){
-        String message = "";
+    private static String getApiExceptionMessage(int code,String message){
+        if(!TextUtils.isEmpty(message))
+            return message;
+
         switch (code) {
             case USER_NOT_EXIST:
                 message = "该用户不存在";
                 break;
             case WRONG_PASSWORD:
                 message = "密码错误";
+                break;
+            case NULL_RESULT:
+                message = "result为空";
                 break;
             default:
                 message = "未知错误";
