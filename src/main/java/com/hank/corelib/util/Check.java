@@ -1,5 +1,9 @@
 package com.hank.corelib.util;
 
+import android.text.TextUtils;
+
+import com.hank.corelib.exception.EmptyException;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -29,5 +33,17 @@ public class Check {
 
 	public static boolean isNull(Object o) {
 		return o == null;
+	}
+
+	public static void checkEmpty(String t, String msg){
+		if(TextUtils.isEmpty(t)){
+			throw new EmptyException(msg);
+		}
+	}
+	public static <T> void checkNull(T t, String msg){
+		if(t==null)
+		{
+			throw new EmptyException(msg);
+		}
 	}
 }

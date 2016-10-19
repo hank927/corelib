@@ -11,6 +11,7 @@ import android.view.View;
 import com.hank.corelib.R;
 import com.hank.corelib.extras.Extras;
 
+import butterknife.ButterKnife;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
@@ -19,13 +20,13 @@ import rx.subscriptions.CompositeSubscription;
  */
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
     //布局文件ID
-    protected abstract int getContentViewId();
-    //view变量与layout对应
-    protected abstract void findViews();
+    protected abstract int getLayoutId();
     //初始化view的值
     protected abstract void init();
     //为view设置监听
     protected abstract void setListeners();
+    //加载数据
+    protected abstract void loadData();
 
     protected <T extends View> T $(int id) {
         return (T) super.findViewById(id);
@@ -35,21 +36,23 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int layoutId = getContentViewId();
+        int layoutId = getLayoutId();
         if(layoutId<=0){
             throw new IllegalArgumentException("the layout resource must be initialized first");
         }
         setContentView(layoutId);
-        findViews();
+        ButterKnife.bind(this);
         init();
         setListeners();
         ActivityManager.getInstance().addActivity(this);
+        loadData();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         onUnsubscribe();
+        ButterKnife.unbind(this);
         ActivityManager.getInstance().finishActivity(this);
     }
 

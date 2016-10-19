@@ -17,9 +17,7 @@
 package com.hank.corelib.http.exception;
 
 /**
- * Created by david on 16/8/21.
- * Email: huangdiv5@gmail.com
- * GitHub: https://github.com/alighters
+ * Created by Hank on 16/8/21.
  */
 public class HttpException extends RuntimeException {
     public HttpException() {

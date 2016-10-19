@@ -9,7 +9,7 @@ import com.hank.corelib.http.converter.GsonConverterFactory;
 import com.hank.corelib.http.interceptor.CacheInterceptor;
 import com.hank.corelib.http.interceptor.LoggerInterceptor;
 import com.hank.corelib.logger.Logger;
-import com.hank.corelib.util.CollectionUtils;
+import com.hank.corelib.util.Check;
 import com.hank.corelib.util.FileUtil;
 import com.hank.corelib.util.SDCardUtils;
 
@@ -137,7 +137,7 @@ public class AppClient {
             public Response intercept(Chain chain) throws IOException {
                Request.Builder builder = chain.request()
                         .newBuilder();
-                if(!CollectionUtils.isEmpty(headers)){
+                if(!Check.isEmpty(headers)){
                     for (Map.Entry<String, String> entry : headers.entrySet()) {
                         builder.header(entry.getKey(),entry.getValue());
                     }
@@ -222,9 +222,9 @@ public class AppClient {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         List<Interceptor> lists = new ArrayList<>();
         List<Interceptor> ls = getOkHttpClient().interceptors();
-        if(!CollectionUtils.isEmpty(ls))
+        if(!Check.isEmpty(ls))
             lists.addAll(ls);
-        if(!CollectionUtils.isEmpty(interceptors)){
+        if(!Check.isEmpty(interceptors)){
             for(Interceptor interceptor:interceptors)
                 lists.add(interceptor);
         }
@@ -239,7 +239,7 @@ public class AppClient {
                         builder.addInterceptor(interceptor);
                 }
             }
-        if(!CollectionUtils.isEmpty(loggerInterceptors)){
+        if(!Check.isEmpty(loggerInterceptors)){
             for(Interceptor interceptor:loggerInterceptors)
                 builder.addInterceptor(interceptor);
         }

@@ -12,4 +12,6 @@ public interface LogAdapter {
   void v(String tag, String message);
 
   void wtf(String tag, String message);
+
+  void saveToFile(boolean isSave, String path);
 }

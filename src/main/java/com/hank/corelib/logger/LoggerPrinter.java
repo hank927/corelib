@@ -22,7 +22,7 @@ import javax.xml.transform.stream.StreamSource;
 
 final class LoggerPrinter implements Printer {
 
-  private static final String DEFAULT_TAG = "PRETTYLOGGER";
+  private static final String DEFAULT_TAG = "LOGGER";
 
   private static final int DEBUG = 3;
   private static final int ERROR = 6;

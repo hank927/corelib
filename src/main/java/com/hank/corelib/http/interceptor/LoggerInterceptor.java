@@ -23,7 +23,7 @@ import okio.Buffer;
  * Created by zhy on 16/3/1.
  */
 public class LoggerInterceptor implements Interceptor {
-    public static final String TAG = "Logger:%s";
+    public static final String TAG = "Logger";
     private String tag;
     private boolean showResponse;
 
@@ -50,38 +50,40 @@ public class LoggerInterceptor implements Interceptor {
     private Response logForResponse(Response response) {
         try {
             //===>response log
-            Logger.d(tag, "========response'log=======");
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("========response'log======="+"\n");
             Response.Builder builder = response.newBuilder();
             Response clone = builder.build();
-            Logger.d(tag, "url : " + clone.request().url());
-            Logger.d(tag, "code : " + clone.code());
-            Logger.d(tag, "protocol : " + clone.protocol());
+            buffer.append("url : " + clone.request().url()+"\n");
+            buffer.append("code : " + clone.code()+"\n");
+            buffer.append("protocol : " + clone.protocol()+"\n");
             if (!TextUtils.isEmpty(clone.message()))
-                Logger.d(tag, "message : " + clone.message());
+                buffer.append("message : " + clone.message()+"\n");
 
             if (showResponse) {
                 ResponseBody body = clone.body();
                 if (body != null) {
                     MediaType mediaType = body.contentType();
                     if (mediaType != null) {
-                        Logger.d(tag, "responseBody's contentType : " + mediaType.toString());
+                        buffer.append("responseBody's contentType : " + mediaType.toString()+"\n");
                         if (isText(mediaType)) {
                             String resp = body.string();
-                            Logger.d(tag, "responseBody's content : " + resp);
-
+                            buffer.append("responseBody's content : " + resp+"\n");
                             body = ResponseBody.create(mediaType, resp);
+                            buffer.append( "========response'log=======end");
+                            Logger.d(tag, buffer.toString());
                             return response.newBuilder().body(body).build();
                         } else {
-                            Logger.d(tag, "responseBody's content : " + " maybe [file part] , too large too print , ignored!");
+                            buffer.append( "responseBody's content : " + " maybe [file part] , too large too print , ignored!"+"\n");
                         }
                     }
                 }
             }
-
-            Logger.d(tag, "========response'log=======end");
+            buffer.append( "========response'log=======end");
+            Logger.d(tag, buffer.toString());
         } catch (Exception e) {
-//            e.printStackTrace();
-            Logger.d(e);
+            e.printStackTrace();
+            Logger.e(e);
         }
 
         return response;
@@ -92,27 +94,32 @@ public class LoggerInterceptor implements Interceptor {
             String url = request.url().toString();
             Headers headers = request.headers();
 
-            Logger.d(tag, "========request'log=======");
-            Logger.d(tag, "method : " + request.method()+","+headers.size());
-            Logger.d(tag, "url : " + url);
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("========request'log======="+"\n");
+            buffer.append("method : " + request.method()+"\n");
+            buffer.append("url : " + url+"\n");
+            buffer.append("headers:"+"\n");
             if (headers != null && headers.size() > 0) {
-                Logger.d(tag, "headers : " + headers.toString());
+                buffer.append(headers.toString()+"\n");
             }
+
             RequestBody requestBody = request.body();
             if (requestBody != null) {
                 MediaType mediaType = requestBody.contentType();
                 if (mediaType != null) {
-                    Logger.d(tag, "requestBody's contentType : " + mediaType.toString());
+                    buffer.append("requestBody's contentType : " + mediaType.toString()+"\n");
                     if (isText(mediaType)) {
-                        Logger.d(tag, "requestBody's content : " + bodyToString(request));
+                        buffer.append("requestBody's content : " + bodyToString(request)+"\n");
                     } else {
-                        Logger.d(tag, "requestBody's content : " + " maybe [file part] , too large too print , ignored!");
+                        buffer.append( "requestBody's content : " + " maybe [file part] , too large too print , ignored!\n");
                     }
                 }
             }
-            Logger.d(tag, "========request'log=======end");
+            buffer.append("========request'log=======end"+"\n");
+            Logger.d(tag, buffer.toString());
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
+            Logger.e(e);
         }
     }
 

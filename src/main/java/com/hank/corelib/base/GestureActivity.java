@@ -34,7 +34,7 @@ public abstract class GestureActivity extends BaseActivity implements View.OnTou
     }
 
     @Override
-    protected int getContentViewId() {
+    protected int getLayoutId() {
         return 0;
     }
 

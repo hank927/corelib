@@ -1,5 +1,7 @@
 package com.hank.corelib.logger;
 
+import com.hank.corelib.util.Check;
+
 public final class Settings {
 
   private int methodCount = 2;
@@ -37,6 +39,11 @@ public final class Settings {
 
   public Settings logAdapter(LogAdapter logAdapter) {
     this.logAdapter = logAdapter;
+    return this;
+  }
+
+  public Settings saveToFile(boolean isSave, String path){
+    getLogAdapter().saveToFile(isSave, path);
     return this;
   }
 

@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.ButterKnife;
+
 
 /**
  * Created by Hank on 2016/5/23.
@@ -14,12 +16,14 @@ import android.view.ViewGroup;
 public abstract class BaseFragment extends Fragment {
     //避免getActivity返回为空
     protected BaseActivity mActivity;
-
-    protected abstract void initView(View view, Bundle savedInstanceState);
-
     //获取fragment布局文件ID
     protected abstract int getLayoutId();
-
+    //初始化view的值
+    protected abstract void init();
+    //为view设置监听
+    protected abstract void setListeners();
+    //加载数据
+    protected abstract void loadData();
     //获取宿主Activity
     protected BaseActivity getHoldingActivity() {
         return mActivity;
@@ -34,12 +38,16 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(getLayoutId(), container, false);
-        initView(view, savedInstanceState);
+        ButterKnife.bind(this,view);
+        init();
+        setListeners();
+        loadData();
         return view;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 }

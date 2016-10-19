@@ -5,7 +5,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Zane on 16/3/14.
+ * Created by Hank on 16/3/14.
  * 线程转换器
  */
 public class SchedulerTransform<T> implements Observable.Transformer<T, T> {

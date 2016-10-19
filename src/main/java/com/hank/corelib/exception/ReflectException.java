@@ -2,6 +2,7 @@ package com.hank.corelib.exception;
 
 /**
  * Created by Hank on 16/8/28.
+ * 反射过程中异常类
  */
 public class ReflectException extends RuntimeException {
     public ReflectException() {
